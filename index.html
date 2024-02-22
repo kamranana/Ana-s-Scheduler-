@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <title>Work Day Scheduler</title>
+</head>
+<body class="bg-gray-100 font-inter text-gray-900">
+  <header class="bg-white text-center py-8 mb-6 shadow">
+    <h1 class="text-4xl font-bold">Work Day Scheduler</h1>
+    <p class="text-lg mt-2">A simple calendar app for scheduling your work day</p>
+    <p id="currentDay" class="text-lg font-semibold mt-1"></p>
+  </header>
+  <main class="container mx-auto px-4">
+    <div id="timeBlocks" class="space-y-4">
+      <!-- Time blocks will be dynamically inserted here -->
+    </div>
+  </main>
+
+  <script>
+    document.getElementById('currentDay').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+    const workHours = [9, 10, 11, 12, 13, 14, 15, 16];
+    const container = document.getElementById('timeBlocks');
+    const currentHour = new Date().getHours();
+
+    workHours.forEach(hour => {
+      const timeBlock = document.createElement('div');
+      timeBlock.className = 'flex items-center p-4 bg-white shadow rounded-lg';
+
+      const hourDisplay = document.createElement('div');
+      hourDisplay.className = 'w-20 text-center font-semibold';
+      hourDisplay.textContent = `${hour > 12 ? hour - 12 : hour}${hour >= 12 ? 'PM' : 'AM'}`;
+
+      const textArea = document.createElement('textarea');
+      textArea.className = `flex-1 border-0 p-2 text-black rounded ${hour < currentHour ? 'bg-gray-300' : hour === currentHour ? 'bg-red-300' : 'bg-green-300'}`;
+      textArea.setAttribute('rows', '3');
+
+      const saveButton = document.createElement('button');
+      saveButton.className = 'w-10 ml-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded';
+      saveButton.innerHTML = '<i class="fas fa-save"></i>';
+      saveButton.addEventListener('click', () => {
+        localStorage.setItem(`hour-${hour}`, textArea.value);
+      });
+
+      textArea.value = localStorage.getItem(`hour-${hour}`) || '';
+
+      timeBlock.appendChild(hourDisplay);
+      timeBlock.appendChild(textArea);
+      timeBlock.appendChild(saveButton);
+
+      container.appendChild(timeBlock);
+    });
+  </script>
+</body>
+</html>
